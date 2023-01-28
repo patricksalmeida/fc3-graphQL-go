@@ -8,4 +8,5 @@ import "github.com/patricksalmeida/fc3-graphQL-go/internal/database"
 
 type Resolver struct{
 	CategoryDB *database.Category
+	CourseDB *database.Course
 }

@@ -52,9 +52,10 @@ type ComplexityRoot struct {
 	}
 
 	Course struct {
-		Category func(childComplexity int) int
-		ID       func(childComplexity int) int
-		Name     func(childComplexity int) int
+		Category    func(childComplexity int) int
+		Description func(childComplexity int) int
+		ID          func(childComplexity int) int
+		Name        func(childComplexity int) int
 	}
 
 	Mutation struct {
@@ -126,6 +127,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Course.Category(childComplexity), true
+
+	case "Course.description":
+		if e.complexity.Course.Description == nil {
+			break
+		}
+
+		return e.complexity.Course.Description(childComplexity), true
 
 	case "Course.id":
 		if e.complexity.Course.ID == nil {
@@ -523,6 +531,8 @@ func (ec *executionContext) fieldContext_Category_courses(ctx context.Context, f
 				return ec.fieldContext_Course_id(ctx, field)
 			case "name":
 				return ec.fieldContext_Course_name(ctx, field)
+			case "description":
+				return ec.fieldContext_Course_description(ctx, field)
 			case "category":
 				return ec.fieldContext_Course_category(ctx, field)
 			}
@@ -608,6 +618,47 @@ func (ec *executionContext) _Course_name(ctx context.Context, field graphql.Coll
 }
 
 func (ec *executionContext) fieldContext_Course_name(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Course",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Course_description(ctx context.Context, field graphql.CollectedField, obj *model.Course) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Course_description(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Description, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*string)
+	fc.Result = res
+	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Course_description(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "Course",
 		Field:      field,
@@ -780,6 +831,8 @@ func (ec *executionContext) fieldContext_Mutation_createCourse(ctx context.Conte
 				return ec.fieldContext_Course_id(ctx, field)
 			case "name":
 				return ec.fieldContext_Course_name(ctx, field)
+			case "description":
+				return ec.fieldContext_Course_description(ctx, field)
 			case "category":
 				return ec.fieldContext_Course_category(ctx, field)
 			}
@@ -895,6 +948,8 @@ func (ec *executionContext) fieldContext_Query_courses(ctx context.Context, fiel
 				return ec.fieldContext_Course_id(ctx, field)
 			case "name":
 				return ec.fieldContext_Course_name(ctx, field)
+			case "description":
+				return ec.fieldContext_Course_description(ctx, field)
 			case "category":
 				return ec.fieldContext_Course_category(ctx, field)
 			}
@@ -2962,6 +3017,10 @@ func (ec *executionContext) _Course(ctx context.Context, sel ast.SelectionSet, o
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}
+		case "description":
+
+			out.Values[i] = ec._Course_description(ctx, field, obj)
+
 		case "category":
 
 			out.Values[i] = ec._Course_category(ctx, field, obj)

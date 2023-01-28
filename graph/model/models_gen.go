@@ -10,9 +10,10 @@ type Category struct {
 }
 
 type Course struct {
-	ID       string    `json:"id"`
-	Name     string    `json:"name"`
-	Category *Category `json:"category"`
+	ID          string    `json:"id"`
+	Name        string    `json:"name"`
+	Description *string   `json:"description"`
+	Category    *Category `json:"category"`
 }
 
 type NewCategory struct {
