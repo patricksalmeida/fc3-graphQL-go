@@ -6,7 +6,6 @@ package graph
 
 import (
 	"context"
-	"fmt"
 
 	"github.com/patricksalmeida/fc3-graphQL-go/graph/model"
 )
@@ -64,7 +63,23 @@ func (r *queryResolver) Categories(ctx context.Context) ([]*model.Category, erro
 
 // Courses is the resolver for the courses field.
 func (r *queryResolver) Courses(ctx context.Context) ([]*model.Course, error) {
-	panic(fmt.Errorf("not implemented: Courses - courses"))
+	courses, err := r.CourseDB.FindAll()
+
+	if err != nil {
+		return nil, err
+	}
+
+	var coursesModel []*model.Course
+
+	for _, category := range courses {
+		coursesModel = append(coursesModel, &model.Course{
+			ID:          category.ID,
+			Name:        category.Name,
+			Description: &category.Description,
+		})
+	}
+
+	return coursesModel, nil
 }
 
 // Mutation returns MutationResolver implementation.
